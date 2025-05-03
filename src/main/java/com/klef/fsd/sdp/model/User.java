@@ -1,10 +1,17 @@
 package com.klef.fsd.sdp.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -39,6 +46,10 @@ public class User
     
     @Column(name="user_location", length = 50, nullable = false)
     private String location;
+    
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<TaskList> taskLists = new ArrayList<>();
 
     // Getters and Setters
     public int getId() {
@@ -113,11 +124,4 @@ public class User
         this.location = location;
     }
 
-    // Optional: toString() method
-    @Override
-    public String toString() {
-        return "User [id=" + id + ", name=" + name + ", gender=" + gender + ", dob=" + dob + ", email=" + email
-                + ", username=" + username + ", password=" + password + ", mobileno=" + mobileno + ", location="
-                + location + "]";
-    }
 }

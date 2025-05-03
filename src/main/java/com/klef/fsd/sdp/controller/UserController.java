@@ -26,7 +26,7 @@ public class UserController
    
    @Autowired
    private UserRepository userRepository;
-    
+   
    @GetMapping("/")
    public String home()
    {
@@ -37,9 +37,9 @@ public class UserController
    public ResponseEntity<String> userRegistration(@RequestBody User user) {
        try {
            String output = userService.userRegistration(user);
+           
            return ResponseEntity.ok(output);
        } catch(DataIntegrityViolationException e) {
-           // This will catch database constraint violations
            return ResponseEntity.status(400).body("Registration failed: " + 
                e.getRootCause().getMessage());
        } catch(Exception e) {
@@ -47,28 +47,8 @@ public class UserController
                e.getMessage());
        }
    }
+
    
-//   @PostMapping("/checkUserLogin")
-//   public ResponseEntity<?> checkUserLogin(@RequestBody User user) 
-//   {
-//       try 
-//       {
-//           User u = userService.checkUserLogin(user.getUsername(), user.getPassword());
-//
-//           if (u != null) 
-//           {
-//               return ResponseEntity.ok(u); // Login successful
-//           } 
-//           else 
-//           {
-//               return ResponseEntity.status(401).body("Invalid Username or Password"); // Login failed
-//           }
-//       } 
-//       catch (Exception e) 
-//       {
-//           return ResponseEntity.status(500).body("Login failed: " + e.getMessage());
-//       }
-//   }
    @PostMapping("/checkUserLogin")
    public ResponseEntity<User> checkUserLogin(@RequestBody User user) {
        try {
