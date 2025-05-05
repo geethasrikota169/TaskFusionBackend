@@ -34,6 +34,11 @@ public class TaskList {
     @OneToMany(mappedBy = "list", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks = new ArrayList<>();
     
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToOne
+    @JoinColumn(name = "manager_id")
+    private Manager manager;
+    
     public Long getId() {
         return id;
     }
@@ -64,5 +69,13 @@ public class TaskList {
 
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+    }
+    
+    public Manager getManager() {
+        return manager;
+    }
+
+    public void setManager(Manager manager) {
+        this.manager = manager;
     }
 }

@@ -7,74 +7,63 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.klef.fsd.sdp.model.Admin;
+import com.klef.fsd.sdp.model.Manager;
 import com.klef.fsd.sdp.model.User;
-//import com.klef.fsd.sdp.model.Manager;
 import com.klef.fsd.sdp.repository.AdminRepository;
+import com.klef.fsd.sdp.repository.ManagerRepository;
 import com.klef.fsd.sdp.repository.UserRepository;
-//import com.klef.fsd.sdp.repository.ManagerRepository;
+
 
 @Service
-public class AdminServiceImpl implements AdminService
-{
+public class AdminServiceImpl implements AdminService{
 	@Autowired
     private AdminRepository adminRepository;
 	
-//	@Autowired
-//    private ManagerRepository managerRepository;
+	@Autowired
+    private ManagerRepository managerRepository;
 	
 	@Autowired
 	private UserRepository userRepository;
 	
 	@Override
-	public Admin checkadminlogin(String username, String password) 
-	{
+	public Admin checkadminlogin(String username, String password) {
 		return adminRepository.findByUsernameAndPassword(username, password);
 	}
 
-//	@Override
-//	public String addeventmanager(Manager manager) 
-//	{
-//		managerRepository.save(manager);
-//		return "Event Manager Added Successfully";
-//	}
-
-//	@Override
-//	public List<Manager> displayeventmanagers() 
-//	{
-//		return managerRepository.findAll();
-//	}
+	@Override
+	public String addmanager(Manager manager) {
+		managerRepository.save(manager);
+		return "Manager Added Successfully";
+	}
 
 	@Override
-	public List<User> displayusers() 
-	{
+	public List<Manager> displaymanagers() {
+		return managerRepository.findAll();
+	}
+
+	@Override
+	public List<User> displayusers() {
 		return userRepository.findAll();
 	}
 
 	@Override
-	public String deleteuser(int cid) 
-	{
-	    Optional<User> user = userRepository.findById(cid);
+	public String deleteuser(int uid) {
+	    Optional<User> user = userRepository.findById(uid);
 	    
-	    if (user.isPresent()) 
-	    {	
-	        userRepository.deleteById(cid);
-	        return "Customer Deleted Successfully";
-	    } 
-	    else 
-	    {
-	        return "Customer ID Not Found";
+	    if (user.isPresent()) {	
+	        userRepository.deleteById(uid);
+	        return "User Deleted Successfully";
+	    } else {
+	        return "User ID Not Found";
 	    }
 	}
 	
-//	@Override
-//	public String deletemanager(int nid) 
-//	{
-//	    managerRepository.deleteById(nid);
-//	    return "Manager Deleted Successfully";
-//	}
-
-	
-	
+	@Override
+	public String deletemanager(int nid) {
+	    managerRepository.deleteById(nid);
+	    return "Manager Deleted Successfully";
 	}
+	
+}
 
 

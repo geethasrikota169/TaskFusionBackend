@@ -1,5 +1,6 @@
 package com.klef.fsd.sdp.service;
 
+import com.klef.fsd.sdp.model.Manager;
 import com.klef.fsd.sdp.model.Task;
 import com.klef.fsd.sdp.model.TaskList;
 import com.klef.fsd.sdp.model.User;
@@ -109,4 +110,96 @@ public class TaskService {
         existingList.setName(updatedList.getName());
         return taskListRepository.save(existingList);
     }
+    
+    public TaskList createListForManager(String name, Manager manager) {
+        TaskList list = new TaskList();
+        list.setName(name);
+        list.setManager(manager);
+        return taskListRepository.save(list);
+    }
+
+    public List<TaskList> getManagerLists(Manager manager) {
+        return taskListRepository.findByManager(manager);
+    }
+    
+    public Task createTaskForManager(String title, String description, Long listId, Manager manager) {
+        TaskList list = taskListRepository.findById(listId)
+            .orElseThrow(() -> new RuntimeException("List not found"));
+
+        if (list.getManager() == null || list.getManager().getId()!=manager.getId()) {
+            throw new RuntimeException("Unauthorized access to list");
+        }
+
+        Task task = new Task();
+        task.setTitle(title);
+        task.setDescription(description);
+        task.setCompleted(false);
+        task.setList(list);
+
+        Task savedTask = taskRepository.save(task);
+        list.getTasks().add(savedTask);
+        return savedTask;
+    }
+
+    public List<Task> getTasksByListForManager(Long listId, Manager manager) {
+        TaskList list = taskListRepository.findById(listId)
+            .orElseThrow(() -> new RuntimeException("List not found"));
+
+        if (list.getManager() == null || list.getManager().getId()!= manager.getId()) {
+            throw new RuntimeException("Unauthorized access to list");
+        }
+
+        return taskRepository.findByList(list);
+    }
+
+    public void deleteTaskForManager(Long taskId, Manager manager) {
+        Task task = taskRepository.findById(taskId)
+            .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        if (task.getList().getManager() == null || task.getList().getManager().getId() != manager.getId()) {
+            throw new RuntimeException("Unauthorized access to task");
+        }
+
+        taskRepository.delete(task);
+    }
+
+    public Task updateTaskForManager(Long taskId, Task updatedTask, Manager manager) {
+        Task existingTask = taskRepository.findById(taskId)
+            .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        if (existingTask.getList().getManager() == null || existingTask.getList().getManager().getId() != manager.getId()) {
+            throw new RuntimeException("Unauthorized access to task");
+        }
+
+        existingTask.setTitle(updatedTask.getTitle());
+        existingTask.setDescription(updatedTask.getDescription());
+        existingTask.setCompleted(updatedTask.isCompleted());
+
+        return taskRepository.save(existingTask);
+    }
+
+    public void deleteListForManager(Long listId, Manager manager) {
+        TaskList list = taskListRepository.findById(listId)
+            .orElseThrow(() -> new RuntimeException("List not found"));
+
+        if (list.getManager() == null || list.getManager().getId() != manager.getId()) {
+            throw new RuntimeException("Unauthorized access to list");
+        }
+
+        taskRepository.deleteAllByList(list);
+        taskListRepository.delete(list);
+    }
+
+    public TaskList updateListForManager(Long listId, TaskList updatedList, Manager manager) {
+        TaskList existingList = taskListRepository.findById(listId)
+            .orElseThrow(() -> new RuntimeException("List not found"));
+
+        if (existingList.getManager() == null || existingList.getManager().getId()!=manager.getId()) {
+            throw new RuntimeException("Unauthorized access to list");
+        }
+
+        existingList.setName(updatedList.getName());
+        return taskListRepository.save(existingList);
+    }
+
 }
