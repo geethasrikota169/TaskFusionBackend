@@ -1,15 +1,25 @@
 package com.klef.fsd.sdp.service;
 
 import com.klef.fsd.sdp.model.Manager;
+
 import com.klef.fsd.sdp.model.Task;
 import com.klef.fsd.sdp.model.TaskList;
 import com.klef.fsd.sdp.model.User;
 import com.klef.fsd.sdp.repository.TaskListRepository;
 import com.klef.fsd.sdp.repository.TaskRepository;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 @Service
 public class TaskService {
@@ -26,28 +36,33 @@ public class TaskService {
         list.setUser(user);
         return taskListRepository.save(list);
     }
+    
+    public TaskList getListById(Long listId) {
+        return taskListRepository.findById(listId).orElse(null);
+    }
 
     public List<TaskList> getUserLists(User user) {
         return taskListRepository.findByUser(user);
     }
 
+    @Transactional
     public Task createTask(String title, String description, Long listId, User user) {
         TaskList list = taskListRepository.findById(listId)
-            .orElseThrow(() -> new RuntimeException("List not found"));
+            .orElseThrow(() -> new NoSuchElementException("List not found"));
 
-        if (list.getUser().getId() != user.getId()) {
+        if (list.getUser().getId()!=(user.getId())) {
             throw new RuntimeException("Unauthorized access to list");
         }
 
         Task task = new Task();
         task.setTitle(title);
-        task.setDescription(description);
+        task.setDescription(description != null ? description : "");
         task.setCompleted(false);
+        task.setStatus("none");  
+        task.setPriority(0);    
         task.setList(list);
 
-        Task savedTask = taskRepository.save(task);
-        list.getTasks().add(savedTask);
-        return savedTask;
+        return taskRepository.save(task);
     }
 
     public List<Task> getTasksByList(Long listId, User user) {
@@ -72,19 +87,34 @@ public class TaskService {
         taskRepository.delete(task);
     }
 
+
     public Task updateTask(Long taskId, Task updatedTask, User user) {
         Task existingTask = taskRepository.findById(taskId)
-            .orElseThrow(() -> new RuntimeException("Task not found"));
+            .orElseThrow(() -> new NoSuchElementException("Task not found"));
 
-        if (existingTask.getList().getUser().getId() != user.getId()) {
+        if (existingTask.getList().getUser().getId()!=user.getId()) {
             throw new RuntimeException("Unauthorized access to task");
         }
 
-        existingTask.setTitle(updatedTask.getTitle());
-        existingTask.setDescription(updatedTask.getDescription());
-        existingTask.setCompleted(updatedTask.isCompleted());
-
+        // Use BeanUtils to copy non-null properties
+        BeanUtils.copyProperties(updatedTask, existingTask, 
+            getNullPropertyNames(updatedTask));
+        
         return taskRepository.save(existingTask);
+    }
+
+    
+    private static String[] getNullPropertyNames(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        Set<String> emptyNames = new HashSet<>();
+        for(java.beans.PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) emptyNames.add(pd.getName());
+        }
+        String[] result = new String[emptyNames.size()];
+        return emptyNames.toArray(result);
     }
 
     public void deleteList(Long listId, User user) {

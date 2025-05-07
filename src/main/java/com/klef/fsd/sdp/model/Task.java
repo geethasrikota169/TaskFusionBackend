@@ -1,5 +1,7 @@
 package com.klef.fsd.sdp.model;
 
+import java.time.LocalDate;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
@@ -16,14 +18,13 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
     private String title;
     private String description;
     private boolean completed;
+    private String status;
+    private LocalDate deadline;
+    private Integer priority;
     
-//    @ManyToOne
-//    @JoinColumn(name = "user_id")
-//    private User user;
     
     @JsonBackReference
     @ManyToOne
@@ -62,14 +63,6 @@ public class Task {
 		this.completed = completed;
 	}
 
-//	public User getUser() {
-//		return user;
-//	}
-//
-//	public void setUser(User user) {
-//		this.user = user;
-//	}
-
 	public TaskList getList() {
 		return list;
 	}
@@ -77,6 +70,29 @@ public class Task {
 	public void setList(TaskList list) {
 		this.list = list;
 	}
-    
-    // Getters and setters
+
+	public String getStatus() {
+	    return status;
+	}
+
+	public void setStatus(String status) {
+	    this.status = status;
+	}
+
+	public LocalDate getDeadline() {
+	    return deadline;
+	}
+
+	public void setDeadline(LocalDate deadline) {
+	    this.deadline = deadline;
+	}
+
+	public Integer getPriority() {
+	    return priority;
+	}
+
+	public void setPriority(Integer priority) {
+	    this.priority = priority;
+	}
+	
 }
