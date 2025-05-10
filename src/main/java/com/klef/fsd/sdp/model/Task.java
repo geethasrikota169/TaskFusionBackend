@@ -3,6 +3,7 @@ package com.klef.fsd.sdp.model;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -95,4 +96,8 @@ public class Task {
 	    this.priority = priority;
 	}
 	
+	@JsonProperty("listId")
+	public Long getListId() {
+	    return list != null ? list.getId() : null;
+	}
 }

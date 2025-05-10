@@ -16,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -153,24 +154,6 @@ public class TaskService {
         return taskListRepository.findByManager(manager);
     }
     
-//    public Task createTaskForManager(String title, String description, Long listId, Manager manager) {
-//        TaskList list = taskListRepository.findById(listId)
-//            .orElseThrow(() -> new RuntimeException("List not found"));
-//
-//        if (list.getManager() == null || list.getManager().getId()!=manager.getId()) {
-//            throw new RuntimeException("Unauthorized access to list");
-//        }
-//
-//        Task task = new Task();
-//        task.setTitle(title);
-//        task.setDescription(description);
-//        task.setCompleted(false);
-//        task.setList(list);
-//
-//        Task savedTask = taskRepository.save(task);
-//        list.getTasks().add(savedTask);
-//        return savedTask;
-//    }
     public Task createTaskForManager(String title, String description, Long listId, Manager manager) {
         TaskList list = taskListRepository.findById(listId)
             .orElseThrow(() -> new RuntimeException("List not found"));
@@ -250,6 +233,25 @@ public class TaskService {
 
         existingList.setName(updatedList.getName());
         return taskListRepository.save(existingList);
+    }
+    
+    public List<Task> getAllUserTasks(User user) {
+        List<TaskList> userLists = taskListRepository.findByUser(user);
+        List<Task> allTasks = new ArrayList<>();
+        for (TaskList list : userLists) {
+            allTasks.addAll(taskRepository.findByList(list));
+        }
+        
+        return allTasks;
+    }
+    
+    public List<Task> getAllTasksForManager(Manager manager) {
+        List<TaskList> managerLists = taskListRepository.findByManager(manager);
+        List<Task> allTasks = new ArrayList<>();
+        for (TaskList list : managerLists) {
+            allTasks.addAll(taskRepository.findByList(list));
+        }
+        return allTasks;
     }
 
 }

@@ -220,4 +220,11 @@ public class ManagerTaskController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    
+    @GetMapping("/all")
+    public ResponseEntity<List<Task>> getAllManagerTasks(@RequestParam String username) {
+        Manager manager = managerService.getManagerByUsername(username);
+        List<Task> tasks = taskService.getAllTasksForManager(manager);
+        return ResponseEntity.ok(tasks);
+    }
 }

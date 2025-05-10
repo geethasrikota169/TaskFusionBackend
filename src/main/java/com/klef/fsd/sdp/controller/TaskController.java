@@ -346,5 +346,12 @@ public class TaskController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    
+    @GetMapping("/all")
+    public ResponseEntity<List<Task>> getAllUserTasks(@RequestParam String username) {
+        User user = userService.getUserByUsername(username);
+        List<Task> tasks = taskService.getAllUserTasks(user);
+        return ResponseEntity.ok(tasks);
+    }
 
 }
