@@ -1,6 +1,9 @@
 package com.klef.fsd.sdp.service;
 
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +26,20 @@ public class UserServiceImpl implements UserService
     {
         return userRepository.findByUsernameAndPassword(username, password);
     }
+    
     @Override
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+    
+    @Override
+    public User getUserById(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        return user.orElse(null);
+    }
+    
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }

@@ -1,7 +1,10 @@
 package com.klef.fsd.sdp.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -106,6 +109,16 @@ public class UserController
            return ResponseEntity.ok(savedUser);
        } catch (Exception e) {
            return ResponseEntity.status(500).build();
+       }
+   }
+   
+   @GetMapping("/all")
+   public ResponseEntity<?> getAllUsers() {
+       try {
+           List<User> users = userService.getAllUsers();
+           return ResponseEntity.ok(users);
+       } catch (Exception e) {
+           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
        }
    }
 }
