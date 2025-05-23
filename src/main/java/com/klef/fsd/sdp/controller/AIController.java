@@ -16,7 +16,7 @@ import com.klef.fsd.sdp.service.PriorityService;
 
 @RestController
 @RequestMapping("/api/ai")
-@CrossOrigin(origins = "http://localhost:2000", allowCredentials = "true")
+@CrossOrigin(origins = "${frontend.url}", allowCredentials = "true")
 public class AIController {
 
     private final PriorityService priorityService;

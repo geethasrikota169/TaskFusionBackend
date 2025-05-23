@@ -26,7 +26,7 @@ import com.klef.fsd.sdp.service.UserService;
 
 @RestController
 @RequestMapping("/assignments")
-@CrossOrigin(origins = "http://localhost:2000", allowCredentials = "true")
+@CrossOrigin(origins = "${frontend.url}", allowCredentials = "true")
 public class TaskAssignmentController {
     
     @Autowired

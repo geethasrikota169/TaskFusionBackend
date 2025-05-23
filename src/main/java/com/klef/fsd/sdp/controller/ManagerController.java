@@ -17,7 +17,7 @@ import com.klef.fsd.sdp.service.ManagerService;
 
 @RestController
 @RequestMapping("/manager")
-@CrossOrigin(origins = "http://localhost:2000", allowCredentials = "true")
+@CrossOrigin(origins = "${frontend.url}", allowCredentials = "true")
 public class ManagerController 
 {
    @Autowired

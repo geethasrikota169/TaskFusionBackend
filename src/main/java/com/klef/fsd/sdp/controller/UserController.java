@@ -21,7 +21,7 @@ import com.klef.fsd.sdp.service.UserService;
 
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = "http://localhost:2000", allowCredentials = "true") 
+@CrossOrigin(origins = "${frontend.url}", allowCredentials = "true") 
 public class UserController 
 {
    @Autowired

@@ -27,7 +27,7 @@ import com.klef.fsd.sdp.service.TaskService;
 
 @RestController
 @RequestMapping("/manager/tasks")
-@CrossOrigin(origins = "http://localhost:2000", allowCredentials = "true")
+@CrossOrigin(origins = "${frontend.url}", allowCredentials = "true")
 public class ManagerTaskController {
 
     @Autowired
