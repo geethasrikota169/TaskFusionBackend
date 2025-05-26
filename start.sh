@@ -1,23 +1,24 @@
 #!/bin/bash
 
-# Set Java path
+# Set Java environment
 export JAVA_HOME=/opt/render/.jdk
 export PATH=$JAVA_HOME/bin:$PATH
 
-# Debugging logs
-echo "--- DEBUG INFO ---"
-echo "JAVA_HOME: $JAVA_HOME"
-echo "PATH: $PATH"
-$JAVA_HOME/bin/java -version || echo "❌ Java not found!"
-echo "JAR files in target/:"
+# Debug info
+echo "=== ENVIRONMENT ==="
+env | sort
+echo "=== JAVA VERSION ==="
+java -version
+echo "=== JAR FILES ==="
 ls -l target/
 
-# Run the JAR (confirm exact name below matches target/)
-JAR_FILE="FSDProject-0.0.1-SNAPSHOT.jar"
-if [ -f "target/$JAR_FILE" ]; then
-    echo "✅ Found JAR. Starting application..."
-    $JAVA_HOME/bin/java -jar target/$JAR_FILE
+# Run with explicit binding
+JAR_FILE="target/FSDProject-0.0.1-SNAPSHOT.jar"
+if [ -f "$JAR_FILE" ]; then
+    echo "✅ Starting application..."
+    java -jar "$JAR_FILE" --server.address=0.0.0.0 --server.port=$PORT
 else
-    echo "❌ JAR file not found: target/$JAR_FILE"
+    echo "❌ Error: JAR file not found!"
+    ls -l target/
     exit 1
 fi
